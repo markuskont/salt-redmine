@@ -1,0 +1,5 @@
+.vagrant/
+data/
+tests/node_modules/
+
+*.log
