@@ -29,7 +29,8 @@ ruby-{{vars['rubyversion']}}:
       - pkg: rbenv-deps
 
 bundler:
-  gem.installed
+  gem.installed:
+    - ruby: {{vars['rubyversion']}}
 
 {{ vars['rootdir'] }}:
   file.directory:
@@ -53,9 +54,56 @@ clone-redmine-repo:
     - require:
       - svn: clone-redmine-repo
 
+{{ vars['rootdir'] }}/config/configuration.yml:
+  file.managed:
+    - source: salt://redmine/config/configuration.yml
+    - template: jinja
+    - require:
+      - svn: clone-redmine-repo
+
 bundle-install-gems:
   cmd.run:
-    - name: /usr/local/rbenv/versions/{{vars['rubyversion']}}/bin/bundle install --without development test
+    - name: rbenv exec bundle install --without development test
     - cwd: {{ vars['rootdir'] }}
+    - env:
+      - RBENV_ROOT: /usr/local/rbenv
     - require:
       - {{ vars['rootdir'] }}/config/database.yml
+
+bundle-generate-secret:
+  cmd.run:
+    - name: rbenv exec rake generate_secret_token && echo 1 > {{vars['rootdir']}}/secret.txt
+    - unless: grep 1 {{vars['rootdir']}}/secret.txt
+    - cwd: {{ vars['rootdir'] }}
+    - env:
+      - RBENV_ROOT: /usr/local/rbenv
+    - require:
+      - {{ vars['rootdir'] }}/config/database.yml
+      - cmd: bundle-install-gems
+
+bundle-db-init-schema:
+  cmd.run:
+    - name: rbenv exec rake db:migrate && echo 1 > {{vars['rootdir']}}/mig.txt
+    - unless: grep 1 {{vars['rootdir']}}/mig.txt
+    - cwd: {{ vars['rootdir'] }}
+    - env:
+      - RBENV_ROOT: /usr/local/rbenv
+      - RAILS_ENV: production
+    - require:
+      - {{ vars['rootdir'] }}/config/database.yml
+      - cmd: bundle-install-gems
+      - cmd: bundle-generate-secret
+
+bundle-db-init-data:
+  cmd.run:
+    - name: echo "" | rbenv exec rake redmine:load_default_data && echo 1 > {{vars['rootdir']}}/db-data.txt
+    - unless: grep 1 {{vars['rootdir']}}/db-data.txt
+    - cwd: {{ vars['rootdir'] }}
+    - env:
+      - RBENV_ROOT: /usr/local/rbenv
+      - RAILS_ENV: production
+    - require:
+      - {{ vars['rootdir'] }}/config/database.yml
+      - cmd: bundle-install-gems
+      - cmd: bundle-generate-secret
+      - cmd: bundle-db-init-schema
