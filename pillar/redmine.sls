@@ -5,5 +5,6 @@ mysql:
 
 redmine:
   rootdir: '/srv/redmine'
+  rbenv_dir: '/usr/local/rbenv'
   rubyversion: '2.3.3'
   version: '3.3'

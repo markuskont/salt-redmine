@@ -83,8 +83,8 @@ bundle-generate-secret:
 
 bundle-db-init-schema:
   cmd.run:
-    - name: rbenv exec rake db:migrate && echo 1 > {{vars['rootdir']}}/mig.txt
-    - unless: grep 1 {{vars['rootdir']}}/mig.txt
+    - name: rbenv exec rake db:migrate && echo 1 > {{vars['rootdir']}}/db-schema.txt
+    - unless: grep 1 {{vars['rootdir']}}/db-schema.txt
     - cwd: {{ vars['rootdir'] }}
     - env:
       - RBENV_ROOT: /usr/local/rbenv

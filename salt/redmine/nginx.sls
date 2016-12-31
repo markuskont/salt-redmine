@@ -1,4 +1,5 @@
 {% set oscodename = grains.get('oscodename')|lower %}
+{% set vars = pillar['redmine'] %}
 
 apt-transport-https:
   pkg.installed
@@ -18,3 +19,35 @@ passenger:
       - passenger
     - require:
       - pkgrepo: passenger
+  service.running:
+    - name: nginx
+    - enabled: True
+    - watch:
+      - /etc/nginx/sites-available/*
+      - /etc/nginx/sites-enabled/*
+    - require:
+      - /etc/nginx/sites-available/{{grains['fqdn']}}
+      - /etc/nginx/sites-enabled/{{grains['fqdn']}}
+
+/etc/nginx/sites-enabled/default:
+  file.absent:
+    - require:
+      - pkg: passenger
+
+/etc/nginx/sites-available/{{grains['fqdn']}}:
+  file.managed:
+    - source: salt://redmine/config/nginx.conf
+    - template: jinja
+    - default:
+      vhost: {{grains['fqdn']}}
+      rootdir: {{vars['rootdir']}}
+      rbenv_dir: {{vars['rbenv_dir']}}
+      rubyversion: {{vars['rubyversion']}}
+    - require:
+      - pkg: passenger
+
+/etc/nginx/sites-enabled/{{grains['fqdn']}}:
+  file.symlink:
+    - target: /etc/nginx/sites-available/{{grains['fqdn']}}
+    - require:
+      - /etc/nginx/sites-available/{{grains['fqdn']}}
