@@ -25,6 +25,7 @@ passenger:
     - watch:
       - /etc/nginx/sites-available/*
       - /etc/nginx/sites-enabled/*
+      - /etc/nginx/nginx.conf
     - require:
       - /etc/nginx/sites-available/{{grains['fqdn']}}
       - /etc/nginx/sites-enabled/{{grains['fqdn']}}
@@ -34,9 +35,15 @@ passenger:
     - require:
       - pkg: passenger
 
-/etc/nginx/sites-available/{{grains['fqdn']}}:
+/etc/nginx/nginx.conf:
   file.managed:
     - source: salt://redmine/config/nginx.conf
+    - require:
+      - pkg: passenger
+
+/etc/nginx/sites-available/{{grains['fqdn']}}:
+  file.managed:
+    - source: salt://redmine/config/site.conf
     - template: jinja
     - default:
       vhost: {{grains['fqdn']}}
