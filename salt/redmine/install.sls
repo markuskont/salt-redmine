@@ -32,11 +32,6 @@ bundler:
   gem.installed:
     - ruby: {{vars['rubyversion']}}
 
-#passenger-gem:
-#  gem.installed:
-#    - ruby: {{vars['rubyversion']}}
-#    - name: passenger
-
 {{ vars['rootdir'] }}:
   file.directory:
     - mode: 755
@@ -112,3 +107,17 @@ bundle-db-init-data:
       - cmd: bundle-install-gems
       - cmd: bundle-generate-secret
       - cmd: bundle-db-init-schema
+
+{% for dir in [ 'files', 'log', 'tmp', 'public/plugin_assets' ] %}
+{{ vars['rootdir'] }}/{{dir}}:
+  file.directory:
+    - mode: 755
+    - user: www-data
+    - group: www-data
+    - recurse:
+      - user
+      - mode
+    - require:
+      - svn: clone-redmine-repo
+      - pkg: passenger
+{% endfor %}
