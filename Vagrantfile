@@ -8,16 +8,16 @@ SALT_VERSION = "v2016.11.2"
 boxes = [
   {
     :name       => "minion-xenial",
-    :mem        => "1024",
-    :cpu        => "2",
+    :mem        => "2048",
+    :cpu        => "4",
     :ip         => "192.168.56.156",
     :image      => 'ubuntu/xenial64',
     :saltmaster => false
   },
   {
     :name       => "minion-jessie",
-    :mem        => "1024",
-    :cpu        => "2",
+    :mem        => "2048",
+    :cpu        => "4",
     :ip         => "192.168.56.157",
     :image      => 'debian/jessie64',
     :saltmaster => false

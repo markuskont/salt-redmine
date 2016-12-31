@@ -32,6 +32,11 @@ bundler:
   gem.installed:
     - ruby: {{vars['rubyversion']}}
 
+#passenger-gem:
+#  gem.installed:
+#    - ruby: {{vars['rubyversion']}}
+#    - name: passenger
+
 {{ vars['rootdir'] }}:
   file.directory:
     - mode: 755

@@ -21,7 +21,7 @@ passenger:
       - pkgrepo: passenger
   service.running:
     - name: nginx
-    - enabled: True
+    - enable: True
     - watch:
       - /etc/nginx/sites-available/*
       - /etc/nginx/sites-enabled/*
@@ -43,6 +43,7 @@ passenger:
       rootdir: {{vars['rootdir']}}
       rbenv_dir: {{vars['rbenv_dir']}}
       rubyversion: {{vars['rubyversion']}}
+      logdir: {{vars['logdir']}}
     - require:
       - pkg: passenger
 
