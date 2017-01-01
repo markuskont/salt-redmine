@@ -4,7 +4,7 @@
 apt-transport-https:
   pkg.installed
 
-passenger:
+passenger-ppa:
   pkgrepo.managed:
     - name: deb https://oss-binaries.phusionpassenger.com/apt/passenger {{oscodename}} main
     - file: /etc/apt/sources.list.d/passenger.list
@@ -18,7 +18,7 @@ passenger:
       - nginx-extras
       - passenger
     - require:
-      - pkgrepo: passenger
+      - pkgrepo: passenger-ppa
   service.running:
     - name: nginx
     - enable: True
@@ -33,17 +33,25 @@ passenger:
 /etc/nginx/sites-enabled/default:
   file.absent:
     - require:
-      - pkg: passenger
+      - pkg: passenger-ppa
 
 /etc/nginx/nginx.conf:
   file.managed:
-    - source: salt://redmine/config/nginx.conf
+    - source: salt://redmine/etc/nginx/nginx.conf
     - require:
-      - pkg: passenger
+      - pkg: passenger-ppa
+      - /etc/nginx/passenger.conf
+
+/etc/nginx/passenger.conf:
+  file.managed:
+    - source: salt://redmine/etc/nginx/passenger.conf
+    - template: jinja
+    - default:
+      user: {{vars['user']}}
 
 /etc/nginx/sites-available/{{grains['fqdn']}}:
   file.managed:
-    - source: salt://redmine/config/site.conf
+    - source: salt://redmine/etc/nginx/sites-available/site.conf
     - template: jinja
     - default:
       vhost: {{grains['fqdn']}}
@@ -52,7 +60,7 @@ passenger:
       rubyversion: {{vars['rubyversion']}}
       logdir: {{vars['logdir']}}
     - require:
-      - pkg: passenger
+      - pkg: passenger-ppa
 
 /etc/nginx/sites-enabled/{{grains['fqdn']}}:
   file.symlink:

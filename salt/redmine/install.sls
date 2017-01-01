@@ -45,7 +45,7 @@ clone-redmine-repo:
 
 {{ vars['rootdir'] }}/config/database.yml:
   file.managed:
-    - source: salt://redmine/config/database.yml
+    - source: salt://redmine/srv/redmine/config/database.yml
     - template: jinja
     - default:
       database: {{ salt['pillar.get']('mysql:app_user') }}
@@ -56,7 +56,7 @@ clone-redmine-repo:
 
 {{ vars['rootdir'] }}/config/configuration.yml:
   file.managed:
-    - source: salt://redmine/config/configuration.yml
+    - source: salt://redmine/srv/redmine/config/configuration.yml
     - template: jinja
     - require:
       - svn: clone-redmine-repo
@@ -108,16 +108,27 @@ bundle-db-init-data:
       - cmd: bundle-generate-secret
       - cmd: bundle-db-init-schema
 
+passenger-user:
+  user.present:
+    - name: {{vars['user']}}
+    - fullname: Passenger daemon user
+    - shell: '/bin/false'
+    - home: {{vars['rootdir']}}
+    - groups:
+      - www-data
+
 {% for dir in [ 'files', 'log', 'tmp', 'public/plugin_assets' ] %}
 {{ vars['rootdir'] }}/{{dir}}:
   file.directory:
-    - mode: 755
-    - user: www-data
+    - mode: 775
+    - user: {{vars['user']}}
     - group: www-data
     - recurse:
       - user
+      - group
       - mode
     - require:
       - svn: clone-redmine-repo
-      - pkg: passenger
+      - pkg: passenger-ppa
+      - user: {{vars['user']}}
 {% endfor %}

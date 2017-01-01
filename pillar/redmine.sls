@@ -9,3 +9,4 @@ redmine:
   logdir: '/var/log/nginx'
   rubyversion: '2.3.3'
   version: '3.3'
+  user: 'passenger'
