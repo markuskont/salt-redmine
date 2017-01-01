@@ -10,3 +10,5 @@ redmine:
   rubyversion: '2.3.3'
   version: '3.3'
   user: 'passenger'
+  tls:
+    common_name: {{grains['fqdn']}}

@@ -26,9 +26,13 @@ passenger-ppa:
       - /etc/nginx/sites-available/*
       - /etc/nginx/sites-enabled/*
       - /etc/nginx/nginx.conf
+      - /etc/nginx/redmine/key.pem
+      - /etc/nginx/redmine/cert.pem
     - require:
       - /etc/nginx/sites-available/{{grains['fqdn']}}
       - /etc/nginx/sites-enabled/{{grains['fqdn']}}
+      - /etc/nginx/redmine/key.pem
+      - /etc/nginx/redmine/cert.pem
 
 /etc/nginx/sites-enabled/default:
   file.absent:
@@ -59,8 +63,12 @@ passenger-ppa:
       rbenv_dir: {{vars['rbenv_dir']}}
       rubyversion: {{vars['rubyversion']}}
       logdir: {{vars['logdir']}}
+      key: /etc/nginx/redmine/key.pem
+      cert: /etc/nginx/redmine/cert.pem
     - require:
       - pkg: passenger-ppa
+      - /etc/nginx/redmine/key.pem
+      - /etc/nginx/redmine/cert.pem
 
 /etc/nginx/sites-enabled/{{grains['fqdn']}}:
   file.symlink:

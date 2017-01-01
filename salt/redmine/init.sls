@@ -3,3 +3,4 @@ include:
   - redmine.database
   - redmine.install
   - redmine.nginx
+  - redmine.tls
