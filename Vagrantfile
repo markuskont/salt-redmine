@@ -9,7 +9,7 @@ boxes = [
   {
     :name       => "minion-xenial",
     :mem        => "2048",
-    :cpu        => "4",
+    :cpu        => "2",
     :ip         => "192.168.56.156",
     :image      => 'ubuntu/xenial64',
     :saltmaster => false
@@ -17,7 +17,7 @@ boxes = [
   {
     :name       => "minion-jessie",
     :mem        => "2048",
-    :cpu        => "4",
+    :cpu        => "2",
     :ip         => "192.168.56.157",
     :image      => 'debian/jessie64',
     :saltmaster => false
