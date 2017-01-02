@@ -55,4 +55,4 @@ DEVEL:
     - redmine
 ```
 
-Note that `DEVEL` is meant to be used within this vagrant setup, and should therefore be changed to reflect your salt environments.
+Note that `DEVEL` is meant to be used within this vagrant setup, and should therefore be changed to reflect your salt environments. Furthermore, do not forget to configure pillar data. I would suggest copying `pillar/redmine.sls` into your existing pillar infrastructure, and changing the development values.
