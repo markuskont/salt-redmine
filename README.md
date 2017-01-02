@@ -35,3 +35,24 @@ This deployment has been tested on a PC host with following specs:
 * Functional internet connection (10-50Mbit/s)
 
 Build time was somewhere between 15 and 30 minutes on this machine.
+
+# Deployment into staging/production
+
+Simply clone this repository into your salt-master server, configure `salt/` directory as fileserver, and add redmine state to your `top.sls` file (if your salt-master is not configured to merge top files). Personally, I prefer role-based setup where salt-minion configuration file contains the following.
+
+```
+grains:
+  roles:
+   - redmine
+```
+
+Deployment on the master side would then work as such:
+
+```
+DEVEL:
+  'roles:redmine':
+    - match: grain
+    - redmine
+```
+
+Note that `DEVEL` is meant to be used within this vagrant setup, and should therefore be changed to reflect your salt environments.
