@@ -1,5 +1,5 @@
 # salt-redmine
-Deploy host redmine using saltstack
+Deploy redmine using saltstack
 
 # vagrant
 
