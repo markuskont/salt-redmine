@@ -1,3 +1,4 @@
+{% set vars = pillar['redmine'] %}
 /etc/ssl/redmine:
   file.directory:
     - mode: 0700
@@ -17,7 +18,7 @@ python-m2crypto:
 /etc/ssl/redmine/cert.pem:
   x509.certificate_managed:
     - signing_private_key: /etc/ssl/redmine/key.pem
-    - CN: vars['tls']['common_name']
+    - CN: {{vars['tls']['common_name']}}
     - C: 'Estonia'
     - ST: 'Harjumaa'
     - L: 'Tallinn'
